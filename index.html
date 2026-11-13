@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUPY</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#FFF7ED}
+.top{background:#FF6B00;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.top b{font-size:13px;line-height:1.2}
+.logo{width:44px;height:44px;background:#fff;color:#00695C;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900}
+.card{background:#fff;margin:14px;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;font-weight:800;cursor:pointer;font-size:16px}
+.btn-orange{background:#FF6B00;color:#fff}
+.btn-green{background:#00695C;color:#fff}
+input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:8px 0;font-size:15px}
+.hidden{display:none!important}
+.green-box{background:#00695C;color:#fff;border-radius:16px;padding:16px;margin:14px}
+.bar{height:10px;background:#FFE0B2;border-radius:20px;overflow:hidden;margin:10px 0}
+.bar div{height:100%;background:#00695C;width:100%}
+.dots{font-size:24px;cursor:pointer;padding:0 8px}
+.menu{position:absolute;right:12px;top:60px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.2);border-radius:12px;overflow:hidden;z-index:20;width:230px}
+.menu div{padding:13px 16px;border-bottom:1px solid #eee;cursor:pointer}
+.member{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee}
+.member button{padding:6px 10px;border:0;border-radius:8px;cursor:pointer}
+.del{background:#fee;color:#d00}
+.out{background:#fff3e0;color:#e65100}
+#wallpaper{position:fixed;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover}
+</style>
+</head>
+<body>
+<img id="wallpaper" class="hidden">
+
+<!-- SPLASH / HEADER -->
+<div class="top">
+  <div style="display:flex;gap:10px;align-items:center">
+    <div class="logo" id="logoLetter">M</div>
+    <b id="orgNameTop">MWITANZIGE<br>UNITED YOUTH PLATFORM</b>
+  </div>
+  <div style="position:relative">
+    <span class="dots" onclick="toggleMenu()">⋮</span>
+    <div id="menu" class="menu hidden">
+      <div onclick="editProfile()">✏️ Edit Profile</div>
+      <div onclick="document.getElementById('wallInput').click()">🖼️ Theme / Wallpaper from Phone</div>
+      <div onclick="showPolicy()">📜 User Policy</div>
+      <div onclick="logout()">🚪 Log Out</div>
+    </div>
+  </div>
+</div>
+<input type="file" id="wallInput" accept="image/*" class="hidden" onchange="setWallpaper(event)">
+
+<!-- AGREEMENT -->
+<div id="page-agreement">
+  <div class="card">
+    <h2 style="color:#FF6B00">Welcome to MUPY 👋</h2><br>
+    <p style="line-height:1.6;font-size:16px">
+    We highly welcome you, our new user and member of <b>MWITANZIGE UNITED YOUTH PLATFORM</b>. Kindly understand our goals.<br><br>
+    In this platform, we are all <b>ONE</b>. We agree and behave like brothers and sisters.<br><br>
+    By being here, you have accepted to be one of our members.<br><br>
+    Here, we have decided: We save <b>2,000 UGX daily</b> without failing, on the number that will be provided inside the platform.<br><br>
+    Failing to meet our organisation's needs may lead to disqualification, as it is not good for one member to slow down the whole organisation.
+    </p><br>
+    <label><input type="checkbox" id="agreeCheck" style="width:auto"> I have read and agree to all terms</label><br><br>
+    <button class="btn btn-orange" onclick="agree()">CONTINUE</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="hidden">
+  <div class="card">
+    <h2>Join MUPY</h2>
+    <input id="nameInput" placeholder="Full Name">
+    <input id="phoneInput" placeholder="Phone Number - e.g 0771234567" type="tel">
+    <input placeholder="Create Password" type="password">
+    <button class="btn btn-green" onclick="login()">SIGN IN</button>
+    <p style="font-size:12px;color:#888;margin-top:10px;text-align:center">Admin login: Use phone 0700000000 to enter as Admin</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="page-main" class="hidden">
+  <div class="card">
+    <h2 id="helloText">Hello, Member 👋</h2>
+    <p style="color:#666">Today's Saving Target: 2,000 UGX</p>
+    <div class="bar"><div></div></div>
+    <div style="display:flex;justify-content:space-between"><span>Saved Today</span><b style="color:#00695C">2,000 UGX</b></div>
+  </div>
+  <div class="green-box">
+    <b>📢 WHAT'S NEW - From Admin</b><br><br>
+    <span id="announcementText">Welcome! Remember to save your 2,000 UGX today. We move as one.</span>
+  </div>
+  <div class="card" id="adminCard" class="hidden">
+    <b>🛡️ Admin Dashboard</b>
+    <p style="color:#666;font-size:14px">Edit logo, name, announcements, members, updates</p><br>
+    <button class="btn btn-orange" onclick="openAdmin()">Open Admin Dashboard</button>
+  </div>
+  <div class="card" id="memberCard">
+    <b>👥 Members - We Are One</b>
+    <p style="color:#666;font-size:14px">All members are brothers & sisters. Stay active.</p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="hidden">
+  <div class="card">
+    <button onclick="goMain()">← Back</button>
+    <h2 style="margin-top:10px;color:#00695C">Admin Dashboard</h2><br>
+    <b>1. Edit Organisation Name</b>
+    <input id="editOrgName" placeholder="MWITANZIGE UNITED YOUTH PLATFORM">
+    <button class="btn btn-green" onclick="saveOrgName()">Save Name</button><br><br>
+    <b>2. Publish What's New</b>
+    <textarea id="editAnn" rows="3" placeholder="Type announcement..."></textarea>
+    <button class="btn btn-orange" onclick="saveAnn()">Publish Announcement</button><br><br>
+    <b>3. Push New Version</b>
+    <input id="editVersion" placeholder="e.g. 1.0.1">
+    <button class="btn btn-green" onclick="saveVersion()">Release Update - Users Will Be Told</button><br><br>
+    <b>4. Members - Only Admin Can Delete / Log Out</b>
+    <div id="membersList"></div>
+  </div>
+</div>
+
+<!-- POLICY MODAL -->
+<div id="policyBox" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:30">
+  <div class="card" style="max-width:400px">
+    <h3>User Policy</h3><br>
+    <p style="line-height:1.6">We are all one. Save 2,000 UGX daily. Respect members. Admin decisions are final. Failing to meet needs may lead to disqualification.</p><br>
+    <button class="btn btn-orange" onclick="document.getElementById('policyBox').classList.add('hidden')">Close</button>
+  </div>
+</div>
+
+<script>
+let members = JSON.parse(localStorage.getItem('mupy_members') || '["John - 0771234567","Sarah - 0709876543","David - 0755555555"]');
+let isAdmin = localStorage.getItem('mupy_isAdmin')==='1';
+let orgName = localStorage.getItem('mupy_org') || 'MWITANZIGE UNITED YOUTH PLATFORM';
+let ann = localStorage.getItem('mupy_ann') || 'Welcome! Remember to save your 2,000 UGX today. We move as one.';
+let userName = localStorage.getItem('mupy_name') || 'Member';
+let latestVersion = localStorage.getItem('mupy_version') || '1.0.0';
+let currentVersion = '1.0.0';
+
+function show(id){ ['page-agreement','page-login','page-main','page-admin'].forEach(p=>document.getElementById(p).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+function toggleMenu(){ document.getElementById('menu').classList.toggle('hidden'); }
+document.addEventListener('click',e=>{ if(!e.target.closest('.dots') && !e.target.closest('#menu')) document.getElementById('menu').classList.add('hidden'); });
+function agree(){ if(!document.getElementById('agreeCheck').checked){ alert('Please tick - I have read and agree'); return; } localStorage.setItem('mupy_agreed','1'); show('page-login'); }
+function login(){
+  let n=document.getElementById('nameInput').value.trim();
+  let ph=document.getElementById('phoneInput').value.trim();
+  if(!n){ alert('Enter your name'); return; }
+  isAdmin = (ph==='0700000000');
+  localStorage.setItem('mupy_isAdmin', isAdmin?'1':'0');
+  localStorage.setItem('mupy_name', n);
+  localStorage.setItem('mupy_logged','1');
+  userName=n; renderMain(); show('page-main');
+}
+function logout(){ localStorage.setItem('mupy_logged','0'); show('page-login'); }
+function editProfile(){ let n=prompt('Edit your name:', userName); if(n){ userName=n; localStorage.setItem('mupy_name', n); renderMain(); } toggleMenu(); }
+function showPolicy(){ document.getElementById('policyBox').classList.remove('hidden'); toggleMenu(); }
+function setWallpaper(e){ let f=e.target.files[0]; if(!f) return; let r=new FileReader(); r.onload=()=>{ let img=document.getElementById('wallpaper'); img.src=r.result; img.classList.remove('hidden'); localStorage.setItem('mupy_wall', r.result); }; r.readAsDataURL(f); toggleMenu(); }
+function renderMain(){
+  document.getElementById('orgNameTop').innerHTML = orgName.replace(' ','<br>');
+  document.getElementById('helloText').innerText = 'Hello, '+userName+' 👋';
+  document.getElementById('announcementText').innerText = ann;
+  document.getElementById('adminCard').classList.toggle('hidden', !isAdmin);
+  document.getElementById('memberCard').classList.toggle('hidden', isAdmin);
+  // Update check
+  if(latestVersion!==currentVersion){ setTimeout(()=>{ if(confirm('New Update '+latestVersion+' is available! Download now to stay on latest version?')) alert('Downloading update... Ask Admin for new link'); },800); }
+}
+function openAdmin(){ renderMembers(); show('page-admin'); }
+function goMain(){ renderMain(); show('page-main'); }
+function saveOrgName(){ let v=document.getElementById('editOrgName').value.trim(); if(v){ orgName=v; localStorage.setItem('mupy_org', v); renderMain(); alert('Name Updated!'); } }
+function saveAnn(){ let v=document.getElementById('editAnn').value.trim(); if(v){ ann=v; localStorage.setItem('mupy_ann', v); renderMain(); alert('Published!'); goMain(); } }
+function saveVersion(){ let v=document.getElementById('editVersion').value.trim(); if(v){ latestVersion=v; localStorage.setItem('mupy_version', v); alert('Users will now be asked to update to '+v); } }
+function renderMembers(){
+  let el=document.getElementById('membersList'); el.innerHTML='';
+  members.forEach((m,i)=>{ let d=document.createElement('div'); d.className='member'; d.innerHTML='<span>'+m+'</span><span><button class="out" onclick="logoutMember('+i+')">Log Out</button> <button class="del" onclick="deleteMember('+i+')">Delete</button></span>'; el.appendChild(d); });
+}
+function deleteMember(i){ if(confirm('Delete '+members[i]+' ?')){ members.splice(i,1); localStorage.setItem('mupy_members', JSON.stringify(members)); renderMembers(); } }
+function logoutMember(i){ alert('Logged out '+members[i]); }
+
+// On Load
+(function(){
+  let wall=localStorage.getItem('mupy_wall'); if(wall){ let img=document.getElementById('wallpaper'); img.src=wall; img.classList.remove('hidden'); }
+  document.getElementById('orgNameTop').innerHTML = orgName.replace(' ','<br>');
+  if(localStorage.getItem('mupy_agreed')==='1'){
+    if(localStorage.getItem('mupy_logged')==='1'){ renderMain(); show('page-main'); } else show('page-login');
+  }
+})();
+</script>
+</body>
+</html>
