@@ -19,3 +19,4 @@ jobs:
           name: mupy-apk
           path: build/app/outputs/flutter-apk/app-release.apk
 # trigger build
+# trigger build 2
